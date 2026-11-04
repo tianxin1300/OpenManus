@@ -1,19 +1,19 @@
-<!doctype html><meta charset=utf-8"><title>Chat</title>
-<style>body{font-family:sans-serif;padding:20px;max-width:800px;margin:auto}#c{border:1px solid #ccc;height:400px;overflow:auto;padding:10px} .u{background:#e3f2fd;margin:5px;padding:8px;border-radius:8px} .b{background:#f1f1f1;margin:5px;padding:8px;border-radius:8px} input{width:70%;padding:8px} button{padding:8px 15px}</style>
+<!doctype html><meta charset="utf-8"><title>Chat</title>
+<style>body{font-family:sans-serif;padding:20px;max-width:800px;margin:auto}#c{border:1px solid #ccc;height:400px;overflow:auto;padding:10px}.u{background:#e3f2fd;margin:5px;padding:8px;border-radius:8px}.b{background:#f1f1f1;margin:5px;padding:8px;border-radius:8px}input{width:70%;padding:8px}button{padding:8px 15px}</style>
 <h1>OpenManus Chat - 4041 objects</h1>
 <div id=c></div>
-<input id=p placeholder="你想有个名字吗" value="你想有个名字吗"><button onclick=go()>发送</button>
+<input id=p placeholder="Type here" value=""><button onclick=go()>Send</button>
 <script>
 const W="https://openmanus-gateway.tianxinyuan881.workers.dev";
 async function go(){
  let v=document.getElementById('p').value; if(!v) return;
  let c=document.getElementById('c');
- c.innerHTML+="<div class=u>你: "+v+"</div>";
+ c.innerHTML+="<div class=u>You: "+v+"</div>";
  document.getElementById('p').value=""; c.scrollTop=c.scrollHeight;
  try{
   let r=await fetch(W,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:v})});
   let t=await r.text(); let a=t;
-  try{ let j=JSON.parse(t); if(j.choices&&j.choices[0]) a=j.choices[0].message.content; }catch(e){}
+  try{ let j=JSON.parse(t); if(j.choices&&j.choices[0]&&j.choices[0].message) a=j.choices[0].message.content; }catch(e){}
   c.innerHTML+="<div class=b>AI: "+a+"</div>"; c.scrollTop=c.scrollHeight;
  }catch(e){ c.innerHTML+="<div class=b>Load failed "+e.message+"</div>"; }
 }
