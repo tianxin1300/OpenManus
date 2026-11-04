@@ -1,17 +1,20 @@
-<!doctype html><meta charset="utf-8"><title>OpenManus 0-cost</title>
-<h1>FoundationAgents/OpenManus 4041 objects - 0 cost</h1>
-<input id=p style=width:80% value="你必须使用str_replace_editor.create工具，在workspace/summary.md写入项目结构总结">
-<button onclick=go()>Run</button><pre id=out></pre>
+<!doctype html><meta charset=utf-8"><title>Chat</title>
+<style>body{font-family:sans-serif;padding:20px;max-width:800px;margin:auto}#c{border:1px solid #ccc;height:400px;overflow:auto;padding:10px} .u{background:#e3f2fd;margin:5px;padding:8px;border-radius:8px} .b{background:#f1f1f1;margin:5px;padding:8px;border-radius:8px} input{width:70%;padding:8px} button{padding:8px 15px}</style>
+<h1>OpenManus Chat - 4041 objects</h1>
+<div id=c></div>
+<input id=p placeholder="你想有个名字吗" value="你想有个名字吗"><button onclick=go()>发送</button>
 <script>
-const WORKER="https://openmanus-gateway.tianxinyuan881.workers.dev";
+const W="https://openmanus-gateway.tianxinyuan881.workers.dev";
 async function go(){
- const v=document.getElementById('p').value;
- document.getElementById('out').textContent="请求中 10s timeout...";
+ let v=document.getElementById('p').value; if(!v) return;
+ let c=document.getElementById('c');
+ c.innerHTML+="<div class=u>你: "+v+"</div>";
+ document.getElementById('p').value=""; c.scrollTop=c.scrollHeight;
  try{
-  const r=await fetch(WORKER,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:v})});
-  const t=await r.text();
-  document.getElementById('out').textContent="状态:"+r.status+"\n"+t.slice(0,3000);
-  if(r.status==429||r.status==504) document.getElementById('out').textContent+="\n\nFallback本地: ollama run qwen:7b";
- }catch(e){document.getElementById('out').textContent=e.message;}
+  let r=await fetch(W,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:v})});
+  let t=await r.text(); let a=t;
+  try{ let j=JSON.parse(t); if(j.choices&&j.choices[0]) a=j.choices[0].message.content; }catch(e){}
+  c.innerHTML+="<div class=b>AI: "+a+"</div>"; c.scrollTop=c.scrollHeight;
+ }catch(e){ c.innerHTML+="<div class=b>Load failed "+e.message+"</div>"; }
 }
 </script>
