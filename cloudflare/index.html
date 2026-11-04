@@ -1,0 +1,17 @@
+<!doctype html><meta charset="utf-8"><title>OpenManus 0-cost</title>
+<h1>FoundationAgents/OpenManus 4041 objects - 0 cost</h1>
+<input id=p style=width:80% value="你必须使用str_replace_editor.create工具，在workspace/summary.md写入项目结构总结">
+<button onclick=go()>Run</button><pre id=out></pre>
+<script>
+const WORKER="https://openmanus-gateway.tianxinyuan881.workers.dev";
+async function go(){
+ const v=document.getElementById('p').value;
+ document.getElementById('out').textContent="请求中 10s timeout...";
+ try{
+  const r=await fetch(WORKER,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt:v})});
+  const t=await r.text();
+  document.getElementById('out').textContent="状态:"+r.status+"\n"+t.slice(0,3000);
+  if(r.status==429||r.status==504) document.getElementById('out').textContent+="\n\nFallback本地: ollama run qwen:7b";
+ }catch(e){document.getElementById('out').textContent=e.message;}
+}
+</script>
